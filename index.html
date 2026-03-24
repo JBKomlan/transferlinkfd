@@ -23,7 +23,7 @@
     
     <div class="auth-zone">
         <label>🔑 Code de Sécurité Admin</label>
-        <input type="password" id="adminPass" placeholder="Tapez votre code ici">
+        <input type="text" id="adminPass" placeholder="Tapez fd2026!tg">
     </div>
 
     <label>📞 WhatsApp Client</label>
@@ -54,11 +54,12 @@
 
 <script>
     function generer() {
-        const pass = document.getElementById('adminPass').value.trim();
-        const MA_CLE = "fd2026!tg"; // Ton mot de passe en clair pour éviter tout bug
+        // On récupère la saisie et on force en minuscules + suppression espaces
+        const passSaisi = document.getElementById('adminPass').value.trim().toLowerCase();
+        const CLE_ATTENDUE = "fd2026!tg";
 
-        if (pass !== MA_CLE) {
-            alert("❌ Code incorrect.");
+        if (passSaisi !== CLE_ATTENDUE) {
+            alert("❌ Code incorrect. Vous avez tapé : [" + passSaisi + "]");
             return;
         }
 
@@ -71,11 +72,11 @@
 
         if(!cli || !mt) return alert("Remplissez au moins le client et le montant.");
 
-        // Signature pour protéger les numéros de réception
-        const signature = btoa(encodeURIComponent(`${n1}|${id1}|${n2}|${id2}|${MA_CLE}`)).substring(0, 15);
+        // Signature simplifiée pour éviter les erreurs d'encodage
+        const signature = btoa(n1 + id1 + n2 + id2 + CLE_ATTENDUE).substring(0, 10);
         
         const params = new URLSearchParams({ mt, n1, id1, n2, id2, s: signature });
-        const lien = window.location.href.replace('index.html', `transfer.html?${params.toString()}`);
+        const lien = window.location.origin + window.location.pathname.replace('index.html', '') + `transfer.html?${params.toString()}`;
         
         document.getElementById('waArea').innerHTML = `<a href="https://wa.me/${cli}?text=${encodeURIComponent(lien)}" target="_blank" class="wa-link">📲 Envoyer au client</a>`;
         document.getElementById('result').style.display = 'block';
