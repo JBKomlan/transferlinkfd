@@ -55,14 +55,14 @@
             if(n1 && n1 !== "0") {
                 const code = `*145*1*${val}*${n1}*1#`;
                 h += `<div style="margin-bottom:20px;">
-                        <div class="info-num">Vers T-Money: <b>${id1 || n1}</b></div>
+                        <div class="info-num">Vers ${n1}: <b>${id1 || n1}</b></div>
                         <a href="tel:${code.replace('#', '%23')}" class="btn-pay" style="background:#007bff">🔵 Envoyer via T-Money</a>
                       </div>`;
             }
             if(n2 && n2 !== "0") {
                 const code = `*155*1*1*${n2}*${n2}*${val}*1#`;
                 h += `<div>
-                        <div class="info-num">Vers Moov: <b>${id2 || n2}</b></div>
+                        <div class="info-num">Vers ${n2} : <b>${id2 || n2}</b></div>
                         <a href="tel:${code.replace('#', '%23')}" class="btn-pay" style="background:#ffc107; color:#333">🟡 Envoyer via Moov</a>
                       </div>`;
             }
