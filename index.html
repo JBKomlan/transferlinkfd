@@ -23,7 +23,7 @@
     
     <div class="auth-zone">
         <label>🔑 Code de Sécurité Admin</label>
-        <input type="text" id="adminPass" placeholder="Tapez fd2026!tg">
+        <input type="text" id="adminPass" placeholder="fd2026!tg">
     </div>
 
     <label>📞 WhatsApp Client</label>
@@ -34,14 +34,14 @@
 
     <div class="net-section" style="border-color: #007bff;">
         <label>🔵 T-Money (Mixx)</label>
-        <input type="number" id="n1" placeholder="Numéro de réception">
-        <input type="text" id="id1" placeholder="Nom (ex: Jean P.)">
+        <input type="number" id="n1" placeholder="Numéro">
+        <input type="text" id="id1" placeholder="Nom/Identité">
     </div>
 
     <div class="net-section" style="border-color: #ffc107;">
         <label>🟡 Moov (Flooz)</label>
-        <input type="number" id="n2" placeholder="Numéro de réception">
-        <input type="text" id="id2" placeholder="Nom (ex: Boutique KoMo)">
+        <input type="number" id="n2" placeholder="Numéro">
+        <input type="text" id="id2" placeholder="Nom/Identité">
     </div>
 
     <button onclick="generer()">Générer le lien sécurisé</button>
@@ -54,12 +54,11 @@
 
 <script>
     function generer() {
-        // On récupère la saisie et on force en minuscules + suppression espaces
         const passSaisi = document.getElementById('adminPass').value.trim().toLowerCase();
         const CLE_ATTENDUE = "fd2026!tg";
 
         if (passSaisi !== CLE_ATTENDUE) {
-            alert("❌ Code incorrect. Vous avez tapé : [" + passSaisi + "]");
+            alert("❌ Code incorrect.");
             return;
         }
 
@@ -70,15 +69,32 @@
         const n2 = document.getElementById('n2').value || "0";
         const id2 = document.getElementById('id2').value || "";
 
-        if(!cli || !mt) return alert("Remplissez au moins le client et le montant.");
+        if(!cli || !mt) return alert("Remplissez le client et le montant.");
 
-        // Signature simplifiée pour éviter les erreurs d'encodage
+        // Création de la signature
         const signature = btoa(n1 + id1 + n2 + id2 + CLE_ATTENDUE).substring(0, 10);
         
-        const params = new URLSearchParams({ mt, n1, id1, n2, id2, s: signature });
-        const lien = window.location.origin + window.location.pathname.replace('index.html', '') + `transfer.html?${params.toString()}`;
+        // Construction sécurisée de l'URL
+        const params = new URLSearchParams({
+            mt: mt,
+            n1: n1,
+            id1: id1,
+            n2: n2,
+            id2: id2,
+            s: signature
+        });
+
+        // Cette ligne crée le lien correct peu importe le domaine (GitHub ou local)
+        const currentUrl = window.location.href;
+        const folderPath = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+        const lienFinal = folderPath + "/transfer.html?" + params.toString();
         
-        document.getElementById('waArea').innerHTML = `<a href="https://wa.me/${cli}?text=${encodeURIComponent(lien)}" target="_blank" class="wa-link">📲 Envoyer au client</a>`;
+        const message = "Bonjour, voici votre lien pour régler le transfert : " + lienFinal;
+        
+        document.getElementById('waArea').innerHTML = `
+            <div style="word-break: break-all; font-size:10px; color:#666; margin-bottom:10px;">${lienFinal}</div>
+            <a href="https://wa.me/${cli}?text=${encodeURIComponent(message)}" target="_blank" class="wa-link">📲 Envoyer via WhatsApp</a>
+        `;
         document.getElementById('result').style.display = 'block';
     }
 </script>
